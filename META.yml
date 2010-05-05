@@ -8,7 +8,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.910'
+generated_by: 'Module::Install version 0.91'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -28,11 +28,11 @@ requires:
   MooseX::Storage: 0.26
   MooseX::Types: 0
   MooseX::Types::Common: 0
-  MooseX::Types::ISO8601: 0
+  MooseX::Types::ISO8601: 0.02
   Sys::Hostname: 0
   namespace::autoclean: 0
   namespace::clean: 0
 resources:
   license: http://dev.perl.org/licenses/
   repository: git://github.com/bobtfish/log-message-structured.git
-version: 0.001
+version: 0.002
