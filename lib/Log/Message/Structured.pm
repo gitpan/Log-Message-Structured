@@ -6,7 +6,7 @@ use MooseX::Types::ISO8601 qw/ ISO8601DateTimeStr /;
 use Sys::Hostname ();
 use namespace::clean -except => 'meta';
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 $VERSION = eval $VERSION;
 
 use overload
@@ -15,16 +15,31 @@ use overload
 
 with Storage('format' => 'JSON');
 
+my $GETOPT = do { local $@; Class::MOP::load_class('MooseX::Getopt'); 1 };
+
+has epochtime => (
+    isa => 'Int',
+    is => 'ro',
+    default => sub { time() },
+    $GETOPT ? ( traits => [qw/ NoGetopt /] ) : (),
+);
+
+sub BUILD {}
+after BUILD => sub { shift()->date };
+
 has date => (
     is => 'ro',
     isa => ISO8601DateTimeStr,
-    default => sub { DateTime->now },
+    lazy => 1,
+    default => sub { DateTime->from_epoch(epoch => shift()->epochtime) },
     coerce => 1,
+    $GETOPT ? ( traits => [qw/ NoGetopt /] ) : (),
 );
 
 has hostname => (
     is => 'ro',
     default => sub { Sys::Hostname::hostname() },
+    $GETOPT ? ( traits => [qw/ NoGetopt /] ) : (),
 );
 
 requires 'stringify';
