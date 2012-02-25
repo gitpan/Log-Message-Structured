@@ -45,6 +45,10 @@ ATTRIBUTES
     The host name of the host the event was generated on. Defaults to the
     hostname as returned by Sys::Hostname.
 
+epochtime
+    The date and time on which the event occurred, as an no of seconds since
+    Jan 1st 1970 (i.e. the output of time())
+
 date
     The date and time on which the event occured, as an ISO8601 date time
     string (from MooseX::Types::ISO8601). Defaults to the time the object is
@@ -66,12 +70,29 @@ METHODS
   pack
     Inflate an instance from a plain data structure (hashref).
 
+  BUILD
+    An empty build method (which will be silently discarded if you have one
+    in your class) is provided, and is wrapped to make sure all attributes
+    are inflated at construction time.
+
 REQUIRED METHODS
   stringify
     You must implement a stringify method, or compose a stringification role
     for all Log::Message::Structured events. This is so that events will
     always be meaningfully loggable be printing them to STDOUT or STDERR, or
     logging them in a traditional way in a file.
+
+A note about namespace::autoclean
+    namespace::autoclean does not work correctly with roles that supply
+    overloading. Therefore you should instead use:
+
+        use namespace::clean -except => 'meta';
+
+    instead in all classes using Log::Message::Structured.
+
+SEE ALSO
+    Log::Message::Structured::Stringify::Sprintf
+    Log::Message::Structured::Stringify::JSON
 
 AUTHOR AND COPYRIGHT
     Tomas Doran (t0m) "<bobtfish@bobtfish.net>".
