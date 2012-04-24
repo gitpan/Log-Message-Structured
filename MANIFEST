@@ -10,6 +10,8 @@ inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Log/Message/Structured.pm
+lib/Log/Message/Structured/Component/Date.pm
+lib/Log/Message/Structured/Component/Hostname.pm
 lib/Log/Message/Structured/Event/ScriptRun.pm
 lib/Log/Message/Structured/Stringify/AsJSON.pm
 lib/Log/Message/Structured/Stringify/Sprintf.pm

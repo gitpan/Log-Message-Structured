@@ -1,12 +1,9 @@
 package Log::Message::Structured;
 use MooseX::Role::WithOverloading;
 use MooseX::Storage;
-use DateTime;
-use MooseX::Types::ISO8601 qw/ ISO8601DateTimeStr /;
-use Sys::Hostname ();
 use namespace::clean -except => 'meta';
 
-our $VERSION = '0.005';
+our $VERSION = '0.006';
 $VERSION = eval $VERSION;
 
 use overload
@@ -25,22 +22,6 @@ has epochtime => (
 );
 
 sub BUILD {}
-after BUILD => sub { shift()->date };
-
-has date => (
-    is => 'ro',
-    isa => ISO8601DateTimeStr,
-    lazy => 1,
-    default => sub { DateTime->from_epoch(epoch => shift()->epochtime) },
-    coerce => 1,
-    $GETOPT ? ( traits => [qw/ NoGetopt /] ) : (),
-);
-
-has hostname => (
-    is => 'ro',
-    default => sub { Sys::Hostname::hostname() },
-    $GETOPT ? ( traits => [qw/ NoGetopt /] ) : (),
-);
 
 requires 'stringify';
 
@@ -66,6 +47,11 @@ Log::Message::Structured - Simple structured log messages
         Log::Message::Structured
         Log::Message::Structured::Stringify::AsJSON
     /;
+    # Components must be consumed seperately
+    with qw/
+        Log::Message::Structured::Component::Date
+        Log::Message::Structured::Component::Hostname
+    /;
 
     has foo => ( is => 'ro', required => 1 );
 
@@ -88,22 +74,31 @@ Log::Message::Structured is a B<VERY VERY SIMPLE> set of roles to help you make 
 which represent 'C<< something which happened >>', that you can then either pass around in your application,
 log in a traditional manor as a log line, or serialize to JSON for transmission over the network.
 
+=head1 COMPONENTS
+
+The consuming class can include components, that will provide additional
+attributes. Here is a list of the components included in the basic
+distribution. More third party components may be available on CPAN.
+
+=over
+
+=item *
+
+L<Log::Message::Structured::Component::Date>
+
+=item *
+
+L<Log::Message::Structured::Component::Hostname>
+
+=back
+
 =head1 ATTRIBUTES
 
 The basic Log::Message::Structured role provides the following read only attributes:
 
-=head2 hostname
-
-The host name of the host the event was generated on. Defaults to the hostname as returned by L<Sys::Hostname>.
-
 =head1 epochtime
 
 The date and time on which the event occurred, as an no of seconds since Jan 1st 1970 (i.e. the output of time())
-
-=head1 date
-
-The date and time on which the event occured, as an ISO8601 date time string (from L<MooseX::Types::ISO8601>).
-Defaults to the time the object is constructed.
 
 =head1 METHODS
 
@@ -128,8 +123,9 @@ Inflate an instance from a plain data structure (hashref).
 
 =head2 BUILD
 
-An empty build method (which will be silently discarded if you have one in your class) is provided,
-and is wrapped to make sure all attributes are inflated at construction time.
+An empty build method (which will be silently discarded if you have one
+in your class) is provided, so that additional components can wrap it
+(to farce lazy attributes to be built).
 
 =head1 REQUIRED METHODS
 
