@@ -3,7 +3,7 @@ use MooseX::Role::WithOverloading;
 use MooseX::Storage;
 use namespace::clean -except => 'meta';
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 $VERSION = eval $VERSION;
 
 use overload
@@ -23,7 +23,7 @@ has epochtime => (
 
 sub BUILD {}
 
-requires 'stringify';
+sub stringify { '' }
 
 1;
 
@@ -41,8 +41,6 @@ Log::Message::Structured - Simple structured log messages
     use Moose;
     use namespace::autoclean;
 
-    # Note: you MUST implement a 'stringify' method, or compose a role
-    #       that gives you a stringify method.
     with qw/
         Log::Message::Structured
         Log::Message::Structured::Stringify::AsJSON
