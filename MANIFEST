@@ -11,6 +11,7 @@ inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Log/Message/Structured.pm
+lib/Log/Message/Structured/Component/AttributesFilter.pm
 lib/Log/Message/Structured/Component/Date.pm
 lib/Log/Message/Structured/Component/Hostname.pm
 lib/Log/Message/Structured/Event/ScriptRun.pm
@@ -22,6 +23,7 @@ MANIFEST.SKIP
 META.yml
 README
 t/00use.t
+t/attributes_filter.t
 t/author/pod-coverage.t
 t/author/pod.t
 t/basic.t

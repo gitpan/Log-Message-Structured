@@ -1,6 +1,5 @@
 package Log::Message::Structured::Stringify::Sprintf;
 use MooseX::Role::Parameterized;
-use Moose::Autobox;
 use MooseX::Types::Moose qw/ ArrayRef /;
 use MooseX::Types::Common::String qw/ NonEmptySimpleStr /;
 use namespace::autoclean;
@@ -13,13 +12,14 @@ parameter format_string => (
 parameter attributes => (
     isa => ArrayRef[NonEmptySimpleStr],
     required => 1,
+    auto_deref => 1,
 );
 
 role {
     my $p = shift;
 
     my $format_string = $p->format_string;
-    my @attributes = $p->attributes->flatten;
+    my @attributes = $p->attributes;
 
     requires $_ for grep { $_ ne 'previous_string' } @attributes;
 
@@ -29,19 +29,13 @@ role {
         default => '',
     );
 
-    around 'stringify' => sub {
+    around 'as_string' => sub {
         my $orig = shift;
         my $self = shift;
         $self->previous_string($self->$orig(@_));
-        sprintf($format_string, map { defined() ? $_ : '<undef>' } map { $self->$_ } @attributes);
+        sprintf($format_string, map { defined() ? $_ : '<undef>' } @{$self->as_hash}{@attributes} );
     };
 
-    # method stringify => sub {
-    #     my $self = shift;
-    #     # FIXME - Find the correct reader name rather than assuming
-    #     #         attribute name == accessor name.
-    #     sprintf($format_string, map { defined() ? $_ : '<undef>' } map { $self->$_ } @attributes);
-    # };
 };
 
 1;
@@ -57,6 +51,8 @@ Log::Message::Structured::Stringify::Sprintf - Traditional style log lines
     package MyLogEvent;
     use Moose;
     use namespace::autoclean;
+
+    with 'Log::Message::Structured';
 
     has [qw/ foo bar /] => ( is => 'ro', required => 1 );
 
@@ -76,8 +72,8 @@ Log::Message::Structured::Stringify::Sprintf - Traditional style log lines
 
 =head1 DESCRIPTION
 
-Implelements the C<stringify> method required by L<Log::Message::Structured> as
-a parameterised Moose role.
+Augments the C<as_string> method provided by L<Log::Message::Structured> as a
+parameterised Moose role.
 
 =head1 PARAMETERS
 
@@ -93,6 +89,7 @@ produce the output.
 =head1 AUTHOR AND COPYRIGHT
 
 Tomas Doran (t0m) C<< <bobtfish@bobtfish.net> >>.
+Damien Krotkine (dams) C<< <dams@cpan.org> >>.
 
 =head1 LICENSE
 
