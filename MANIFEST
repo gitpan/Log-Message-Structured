@@ -16,6 +16,7 @@ lib/Log/Message/Structured/Component/Date.pm
 lib/Log/Message/Structured/Component/Hostname.pm
 lib/Log/Message/Structured/Event/ScriptRun.pm
 lib/Log/Message/Structured/Stringify/AsJSON.pm
+lib/Log/Message/Structured/Stringify/AsYAML.pm
 lib/Log/Message/Structured/Stringify/Sprintf.pm
 Makefile.PL
 MANIFEST			This list of files
@@ -29,4 +30,5 @@ t/author/pod.t
 t/basic.t
 t/event_scriptrun.t
 t/stringify_asjson.t
+t/stringify_asyaml.t
 t/stringify_sprintf.t

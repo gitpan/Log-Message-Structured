@@ -1,13 +1,21 @@
 package Log::Message::Structured;
 use MooseX::Role::WithOverloading;
+use Scalar::Util qw/ blessed /;
 use namespace::clean -except => 'meta';
 
-our $VERSION = '0.009';
+our $VERSION = '0.010';
 $VERSION = eval $VERSION;
 
 use overload
     q{""}    => 'as_string',
     fallback => 1;
+
+has class => (
+  init_arg => undef,
+  is => 'ro',
+  isa => 'Str',
+  default => sub { blessed $_[0] },
+);
 
 my $GETOPT = do { local $@; eval { require MooseX::Getopt; 1 } };
 
@@ -61,9 +69,11 @@ Logging lines to a file is a fairly useful and traditional way of recording what
 However, if you have another use for the same sort of data (for example, sending to another process via a
 message queue, or storing in L<KiokuDB>), then you can be needlessly repeating your data marshalling.
 
-Log::Message::Structured is a B<VERY VERY SIMPLE> set of roles to help you make small structured classes
-which represent 'C<< something which happened >>', that you can then either pass around in your application,
-log in a traditional manor as a log line, or serialize to JSON for transmission over the network.
+Log::Message::Structured is a B<VERY VERY SIMPLE> set of roles to help you make
+small structured classes which represent 'C<< something which happened >>',
+that you can then either pass around in your application, log in a traditional
+manor as a log line, or serialize to JSON or YAML for transmission over the
+network.
 
 =head1 COMPONENTS
 
@@ -81,14 +91,25 @@ L<Log::Message::Structured::Component::Date>
 
 L<Log::Message::Structured::Component::Hostname>
 
+=item *
+
+L<Log::Message::Structured::Component::AttributesFilter>
+
 =back
 
 =head1 ATTRIBUTES
 
-The basic Log::Message::Structured role provides no attributes. See available
-components in L<Log::Message::Structured::Component::*> and consume them, or
-create attributes yourself, to enrich your class
+Except for C<class>, the basic Log::Message::Structured role provides no
+attributes. See available components in
+L<Log::Message::Structured::Component::*> and consume them, or create
+attributes yourself, to enrich your class
 
+=head2 class
+
+Str,ro
+
+An attribute that returns the name of the class that were used when creating
+the instance.
 
 =head1 METHODS
 
@@ -136,7 +157,9 @@ instead in all classes using L<Log::Message::Structured>.
 
 =item L<Log::Message::Structured::Stringify::Sprintf>
 
-=item L<Log::Message::Structured::Stringify::JSON>
+=item L<Log::Message::Structured::Stringify::AsJSON>
+
+=item L<Log::Message::Structured::Stringify::AsYAML>
 
 =back
 

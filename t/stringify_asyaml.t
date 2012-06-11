@@ -7,7 +7,7 @@ use Test::More;
     use Moose;
     with qw( Log::Message::Structured
              Log::Message::Structured::Component::Date
-             Log::Message::Structured::Stringify::AsJSON );
+             Log::Message::Structured::Stringify::AsYAML );
 
     has [qw/foo bar baz/] => ( is => 'ro', required => 1);
 }
@@ -15,6 +15,13 @@ use Test::More;
 my $e = TestEventSprintf->new(foo => 2, bar => 3, baz => 4);
 ok $e;
 
-like "$e", qr/{"epochtime":\d+,"bar":3,"baz":4,"date":"[^"]+","foo":2,"class":"TestEventSprintf"}/;
+like "$e", qr/
+bar: 3
+baz: 4
+class: TestEventSprintf
+date: .*
+epochtime: .*
+foo: 2
+/;
 
 done_testing;
