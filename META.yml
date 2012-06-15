@@ -31,10 +31,11 @@ requires:
   MooseX::Types::ISO8601: 0.02
   MooseX::Types::Structured: 0
   Sys::Hostname: 0
+  YAML::Any: 0
   namespace::autoclean: 0
   namespace::clean: 0
 resources:
   license: http://dev.perl.org/licenses/
   repository: git://github.com/bobtfish/log-message-structured.git
-version: 0.010
+version: 0.011
 x_authority: BOBTFISH
