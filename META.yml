@@ -37,5 +37,5 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: git://github.com/bobtfish/log-message-structured.git
-version: 0.011
-x_authority: BOBTFISH
+version: 0.012
+x_authority: cpan:BOBTFISH
